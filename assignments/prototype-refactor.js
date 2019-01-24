@@ -32,16 +32,25 @@ Prototype Refactor
 //   this.phrase = attributes.phrase;
 // }
 
-class GameObject
+class GameObject {
+    constructor(attributes) {
+        this.createdAt = attributes.createdAt;
+        this.dimensions = attributes.dimensions;    
+    }
+    
+    destroy() {
+        return "Object was removed from the game.";
+    }
+}
 
-const GameObject = function(attributes) {
-    this.createdAt = attributes.createdAt;
-    this.dimensions = attributes.dimensions;
-  }
+// const GameObject = function(attributes) {
+//     this.createdAt = attributes.createdAt;
+//     this.dimensions = attributes.dimensions;
+//   }
   
-  GameObject.prototype.destroy = function() {
-    return "Object was removed from the game.";
-  }
+//   GameObject.prototype.destroy = function() {
+//     return "Object was removed from the game.";
+//   }
   
   /*
     === CharacterStats ===
@@ -50,18 +59,30 @@ const GameObject = function(attributes) {
     * takeDamage() // prototype method -> returns the string '<object name> took damage.'
     * should inherit destroy() from GameObject's prototype
   */
-  
-  const CharacterStats = function(attributes) {
-    GameObject.call(this, attributes);
-    this.healthPoints = attributes.healthPoints;
-    this.name = attributes.name;
-  }
-  
-  CharacterStats.prototype = Object.create(GameObject.prototype);
-  
-  CharacterStats.prototype.takeDamage = function() {
+
+class CharacterStats extends GameObject {
+    constructor(attributes) {
+        super(attributes);
+        this.healthPoints = attributes.healthPoints;
+        this.name = attributes.name;      
+    }
+
+    takeDamage() {
     return `${this.name} took damage`
-  }
+    }
+}
+  
+//   const CharacterStats = function(attributes) {
+//     GameObject.call(this, attributes);
+//     this.healthPoints = attributes.healthPoints;
+//     this.name = attributes.name;
+//   }
+  
+//   CharacterStats.prototype = Object.create(GameObject.prototype);
+  
+//   CharacterStats.prototype.takeDamage = function() {
+//     return `${this.name} took damage`
+//   }
   
   /*
     === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -72,20 +93,33 @@ const GameObject = function(attributes) {
     * should inherit destroy() from GameObject through CharacterStats
     * should inherit takeDamage() from CharacterStats
   */
+
+class Humanoid extends CharacterStats {
+    constructor(attributes) {
+        super(attributes);
+        this.team = attributes.team;
+        this.weapons = attributes.weapons;
+        this.language = attributes.language;    
+    }
+
+    greet() {
+        return `${this.name} offers a greeting in ${this.language}`
+    }
+}
   
-  const Humanoid = function(attributes) {
-    CharacterStats.call(this, attributes);
-    this.team = attributes.team;
-    this.weapons = attributes.weapons;
-    this.language = attributes.language;
-  };
+//   const Humanoid = function(attributes) {
+//     CharacterStats.call(this, attributes);
+//     this.team = attributes.team;
+//     this.weapons = attributes.weapons;
+//     this.language = attributes.language;
+//   };
   
-  Humanoid.prototype = Object.create(CharacterStats.prototype);
-  Humanoid.prototype.greet = function() {
-    return `${this.name} offers a greeting in ${this.language}`
-  };
+//   Humanoid.prototype = Object.create(CharacterStats.prototype);
+//   Humanoid.prototype.greet = function() {
+//     return `${this.name} offers a greeting in ${this.language}`
+//   };
   
-  console.log(Humanoid);
+//   console.log(Humanoid);
    
   /*
     * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -165,101 +199,132 @@ const GameObject = function(attributes) {
   
   
   //Hero boi
-  const Hero = function(attributes) {
-    Humanoid.call(this, attributes);
-  }
-  
-  Hero.prototype = Object.create(Humanoid.prototype);
-  Hero.prototype.attack = function(target) {
-    if(this.healthPoints > 0) {
-      if(target.healthPoints > 0) {
-        let damage = (Math.round(Math.random() * 10));
-        target.healthPoints = target.healthPoints - damage;
-        if (target.healthPoints > 0) {
-          console.log(`${this.name} attacked ${target.name} for ${damage} points! ${target.name} now has ${target.healthPoints} health`)
-        } else {
-          console.log(`${this.name} attacked ${target.name} for ${damage} points and destroyed ${target.name}!`)
-        }
-      } else {
-        console.log(`${this.name} kicked ${target.name}'s dead body`)
-      }
-    } else {
-      console.log(`${this.name}'s body twitched`)
+class Hero extends Humanoid {
+    constructor(attributes) {
+        super(attributes);
     }
-  }
-  
-  //Villain boi
-  const Villain = function(attributes) {
-    Humanoid.call(this, attributes);
-  }
-  
-  Villain.prototype = Object.create(Humanoid.prototype);
-  Villain.prototype.attack = function(target) {
-    if(this.healthPoints > 0) {
-      if(target.healthPoints > 0) {
-        let damage = (Math.round(Math.random() * 10));
-        target.healthPoints = target.healthPoints - damage;
-        if (target.healthPoints > 0) {
-          console.log(`${this.name} attacked ${target.name} for ${damage} points! ${target.name} now has ${target.healthPoints} health`)
-        } else {
-          console.log(`${this.name} attacked ${target.name} for ${damage} points and destroyed ${target.name}!`)
-        }
-      } else {
-        console.log(`${this.name} kicked ${target.name}'s dead body`)
-      }
-    } else {
-      console.log(`${this.name}'s body twitched`)
+
+    attack(target) {
+        if(this.healthPoints > 0) {
+            if(target.healthPoints > 0) {
+              let damage = (Math.round(Math.random() * 10));
+              target.healthPoints = target.healthPoints - damage;
+              if (target.healthPoints > 0) {
+                console.log(`${this.name} attacked ${target.name} for ${damage} points! ${target.name} now has ${target.healthPoints} health`)
+              } else {
+                console.log(`${this.name} attacked ${target.name} for ${damage} points and destroyed ${target.name}!`)
+              }
+            } else {
+              console.log(`${this.name} kicked ${target.name}'s dead body`)
+            }
+          } else {
+            console.log(`${this.name}'s body twitched`)
+          }
+      
     }
-  }
-  
-  
-  
-  
-  
-  
-  const aragorn = new Hero({
-    createdAt: new Date(),
-    dimensions: {
-      length: 1,
-      width: 1,
-      height: 2,
-    },
-    healthPoints: 20,
-    name: 'Aragorn',
-    team: 'Ranger',
-    weapons: [
-      'Andúril',
-    ],
-    language: 'The laguage of man',
-  });
-  
-  const lurtz = new Villain({
-    createdAt: new Date(),
-    dimensions: {
-      length: 1,
-      width: 1,
-      height: 2,
-    },
-    healthPoints: 20,
-    name: 'Lurtz',
-    team: 'Uruk-hai',
-    weapons: [
-      'Bow',
-    ],
-    language: 'black speech',
-  });
-  
-  lurtz.attack(aragorn);
-  aragorn.attack(lurtz);
-  lurtz.attack(aragorn);
-  aragorn.attack(lurtz);
-  lurtz.attack(aragorn);
-  aragorn.attack(lurtz);
-  lurtz.attack(aragorn);
-  aragorn.attack(lurtz);
-  lurtz.attack(aragorn);
-  aragorn.attack(lurtz);
-  lurtz.attack(aragorn);
-  aragorn.attack(lurtz);
+}
+
+// const Hero = function(attributes) {
+// Humanoid.call(this, attributes);
+// }
+
+// Hero.prototype = Object.create(Humanoid.prototype);
+// Hero.prototype.attack = function(target) {
+// if(this.healthPoints > 0) {
+//     if(target.healthPoints > 0) {
+//       let damage = (Math.round(Math.random() * 10));
+//       target.healthPoints = target.healthPoints - damage;
+//       if (target.healthPoints > 0) {
+//         console.log(`${this.name} attacked ${target.name} for ${damage} points! ${target.name} now has ${target.healthPoints} health`)
+//       } else {
+//         console.log(`${this.name} attacked ${target.name} for ${damage} points and destroyed ${target.name}!`)
+//       }
+//     } else {
+//     console.log(`${this.name} kicked ${target.name}'s dead body`)
+//     }
+// } else {
+//     console.log(`${this.name}'s body twitched`)
+// }
+// }
+
+//Villain boi
+class Villain extends Hero {
+    constructor(attributes) {
+        super(attributes);
+    }
+}
+
+// const Villain = function(attributes) {
+// Humanoid.call(this, attributes);
+// }
+
+// Villain.prototype = Object.create(Humanoid.prototype);
+// Villain.prototype.attack = function(target) {
+// if(this.healthPoints > 0) {
+//     if(target.healthPoints > 0) {
+//     let damage = (Math.round(Math.random() * 10));
+//     target.healthPoints = target.healthPoints - damage;
+//     if (target.healthPoints > 0) {
+//         console.log(`${this.name} attacked ${target.name} for ${damage} points! ${target.name} now has ${target.healthPoints} health`)
+//     } else {
+//         console.log(`${this.name} attacked ${target.name} for ${damage} points and destroyed ${target.name}!`)
+//     }
+//     } else {
+//     console.log(`${this.name} kicked ${target.name}'s dead body`)
+//     }
+// } else {
+//     console.log(`${this.name}'s body twitched`)
+// }
+// }
+
+
+
+
+
+
+const aragorn = new Hero({
+createdAt: new Date(),
+dimensions: {
+    length: 1,
+    width: 1,
+    height: 2,
+},
+healthPoints: 20,
+name: 'Aragorn',
+team: 'Ranger',
+weapons: [
+    'Andúril',
+],
+language: 'The laguage of man',
+});
+
+const lurtz = new Villain({
+createdAt: new Date(),
+dimensions: {
+    length: 1,
+    width: 1,
+    height: 2,
+},
+healthPoints: 20,
+name: 'Lurtz',
+team: 'Uruk-hai',
+weapons: [
+    'Bow',
+],
+language: 'black speech',
+});
+
+lurtz.attack(aragorn);
+aragorn.attack(lurtz);
+lurtz.attack(aragorn);
+aragorn.attack(lurtz);
+lurtz.attack(aragorn);
+aragorn.attack(lurtz);
+lurtz.attack(aragorn);
+aragorn.attack(lurtz);
+lurtz.attack(aragorn);
+aragorn.attack(lurtz);
+lurtz.attack(aragorn);
+aragorn.attack(lurtz);
   
   
