@@ -30,6 +30,28 @@ class Instructor extends Person {
     grade(student, subject) {
         console.log(`${student} receives a perfect score on ${subject}`);
     }
+    changeGrade(student) {
+        let gradeDifference = Math.round((Math.random() * 10) * (Math.random() * 10))
+        if((Math.round(Math.random() * 10)) % 2 == 0) {
+            student.grade = student.grade + gradeDifference;
+            if(student.grade > 70) {
+                console.log(`${this.name} changed ${student.name}'s grade by adding ${gradeDifference}% to their grade. ${student.name}'s grade is now ${student.grade}%. Since ${student.name}'s grade is now above a 70% they are eligible to graduate!`);
+            } else {
+                console.log(`${this.name} changed ${student.name}'s grade by adding ${gradeDifference}% to their grade. ${student.name}'s grade is now ${student.grade}%.`);
+            }
+        } else {
+            let oldGrade = student.grade;
+            student.grade = student.grade - gradeDifference;
+            if(student.grade <= 0) {
+                student.grade = 0;
+                console.log(`${student.name}'s grade was ${oldGrade}% before ${this.name} subtracted ${gradeDifference}% from their grade. A grade this low isn't acceptable, please turn in your badge and gun`);
+            } else if(student.grade > 70) {
+                console.log(`${this.name} changed ${student.name}'s grade by subtracting ${gradeDifference}% from their grade. ${student.name}'s grade is now ${student.grade}%. Despite this deduction, ${student.name} is still eligible for graduation.`);
+            } else {
+                console.log(`${this.name} changed ${student.name}'s grade by subtracting ${gradeDifference}% from their grade. ${student.name}'s grade is now ${student.grade}%.`);
+            }
+        }
+    }
 }
 
 // Student class constructor
@@ -39,6 +61,7 @@ class Student extends Person {
         this.previousBackround = traits.previousBackround;
         this.className = traits.className;
         this.favSubjects = traits.favSubjects;
+        this.grade = traits.grade;
     }
 
     listSubjects() {
@@ -50,6 +73,13 @@ class Student extends Person {
     sprintChallenge(subject) {
         console.log(`${this.name} has begun sprint challenge on ${subject}`);
     };
+    canGraduate() {
+        if(this.grade > 70) {
+            console.log(`Graduation thyme`)
+        } else {
+            console.log(`Your princess is in another castle`)
+        }
+    }
 }
 
 // PM class constructor
@@ -101,9 +131,25 @@ const taylor = new Student({
     gender: 'M',
     previousBackround: '?',
     className: 'Web17',
-    favSubjects: ['JavaScript', 'HTML', 'CSS']
+    favSubjects: ['JavaScript', 'HTML', 'CSS'],
+    grade: 40
 });
 
 taylor.listSubjects();
 chance.standup('web17_chance');
 console.log(josh.catchPhrase);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+josh.changeGrade(taylor);
+taylor.canGraduate();
